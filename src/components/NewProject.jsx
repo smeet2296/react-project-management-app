@@ -37,7 +37,7 @@ export default function NewProject({ onSubmit, onCancel }) {
 
   const cancelForm = () => {
     form.reset();
-    onCancel();
+    onCancel({});
   };
 
   return (
