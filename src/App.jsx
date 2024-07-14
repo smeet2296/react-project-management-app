@@ -3,57 +3,43 @@ import SideBar from "./components/SideBar";
 import NewProject from "./components/NewProject";
 import { useState } from "react";
 import Home from "./components/Home";
+import ProjectsStoreProvider from "./store/projects-store";
 
 function App() {
-  let [projects, setProjects] = useState([]);
   let [currentPage, setCurrentPage] = useState({
     page: "HOME",
-    selectedProject:
-      Array.isArray(projects) && projects.length ? projects[0] : {},
+    selectedProject: null,
   });
-  console.log(projects)
 
-  const addProject = (project) => {
-    setProjects((projects) => [{ ...project }, ...projects]);
-    setHomePage(project);
-  };
-
-  const deleteProject = (projectName) => {
-    setProjects((projects) =>
-      projects.filter((project) => project.projectName !== projectName)
-    );
-    setHomePage({});
-  };
-
-  const setHomePage = (project) => {
+  const setHomePage = (projectName) => {
     setCurrentPage({
       page: "HOME",
-      selectedProject: project,
+      selectedProject: projectName,
     });
   };
 
   const setNewProjectPage = () => {
-    setCurrentPage({ page: "NEW_PROJECT", selectedProject: {} });
+    setCurrentPage({ page: "NEW_PROJECT", selectedProject: null });
   };
 
   return (
     <main className="h-screen my-8 flex gap-8">
-      <SideBar
-        projects={projects}
-        selectedProject={currentPage.selectedProject}
-        onAddProject={setNewProjectPage}
-        onSelectProject={(project) => setHomePage(project)}
-      />
-      {currentPage.page === "HOME" && (
-        <Home
-          project={currentPage.selectedProject}
+      <ProjectsStoreProvider setHomePage={setHomePage}>
+        <SideBar
+          selectedProject={currentPage.selectedProject}
           onAddProject={setNewProjectPage}
-          onDeleteProject={deleteProject}
+          onSelectProject={setHomePage}
         />
-      )}
-      {currentPage.page === "NEW_PROJECT" && (
-        <NewProject onSubmit={addProject} onCancel={setHomePage} />
-      )}
+        {currentPage.page === "HOME" && (
+          <Home
+            selectedProject={currentPage.selectedProject}
+            onAddProject={setNewProjectPage}
+          />
+        )}
+        {currentPage.page === "NEW_PROJECT" && (
+          <NewProject onCancel={setHomePage} />
+        )}
+      </ProjectsStoreProvider>
     </main>
   );
 }

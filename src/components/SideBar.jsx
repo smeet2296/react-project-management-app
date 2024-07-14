@@ -1,9 +1,13 @@
+import { useContext } from "react";
+import { ProjectsStore } from "../store/projects-store";
+
 export default function SideBar({
-  projects,
   selectedProject,
   onAddProject,
   onSelectProject,
 }) {
+  const { projects } = useContext(ProjectsStore);
+
   return (
     <aside className="w-1/3 px-8 py-16 bg-stone-900 text-stone-50 md:w-72 rounded-r-xl">
       <h2 className="mb-8 font-bold uppercase md:text-xl text-stone-200">
@@ -21,7 +25,7 @@ export default function SideBar({
         {projects.map((project) => {
           let projectMenuCssClasses =
             "w-full px-2 py-1 rounded-sm my-1 hover:text-stone-200 hover:bg-stone-800";
-          if (project.projectName === selectedProject.projectName) {
+          if (project.projectName === selectedProject) {
             projectMenuCssClasses += " bg-stone-800 text-stone-200";
           } else {
             projectMenuCssClasses += " text-stone-400";
@@ -30,7 +34,7 @@ export default function SideBar({
             <li key={project.projectName}>
               <button
                 className={projectMenuCssClasses}
-                onClick={() => onSelectProject(project)}
+                onClick={() => onSelectProject(project.projectName)}
               >
                 {project.projectName}
               </button>

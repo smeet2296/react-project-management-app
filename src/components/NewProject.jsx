@@ -1,6 +1,8 @@
 import moment from "moment";
 import ElementRender from "./ElementRender";
 import { useForm } from "react-hook-form";
+import { useContext } from "react";
+import { ProjectsStore } from "../store/projects-store";
 
 const formComponents = [
   {
@@ -10,7 +12,7 @@ const formComponents = [
     key: "projectName",
     required: true,
     minLength: 3,
-    maxLength: 10,
+    maxLength: 20,
   },
   {
     type: "TEXT_AREA",
@@ -32,19 +34,20 @@ const formComponents = [
   },
 ];
 
-export default function NewProject({ onSubmit, onCancel }) {
+export default function NewProject({ onCancel }) {
+  const { addProject } = useContext(ProjectsStore);
   const form = useForm();
 
   const cancelForm = () => {
     form.reset();
-    onCancel({});
+    onCancel(null);
   };
 
   return (
     <form
       className="w-[35rem] mt-16"
       onSubmit={form.handleSubmit((data) =>
-        onSubmit(data.$formData$.projectDetails)
+        addProject(data.$formData$.projectDetails)
       )}
     >
       <menu className="flex items-center justify-end gap-4 my-4">

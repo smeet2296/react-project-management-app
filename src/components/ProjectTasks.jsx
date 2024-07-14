@@ -1,29 +1,21 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { ProjectsStore } from "../store/projects-store";
 
 export default function ProjectTasks({ project }) {
+  const { tasks = [], projectName } = project;
   const form = useForm();
-  const [tasks, setTasks] = useState(project.tasks || []);
+  const { addTask, deleteTask } = useContext(ProjectsStore);
 
-  const addTask = (data) => {
-    if (Array.isArray(project.tasks)) {
-      project.tasks = [...project.tasks, data.task];
-    } else {
-      project.tasks = [data.task];
-    }
-    setTasks([...project.tasks]);
+  const saveTaskForm = (data) => {
+    addTask(projectName, data.task);
     form.reset();
-  };
-
-  const deleteTask = (selectedTask) => {
-    project.tasks = project.tasks.filter((task) => task !== selectedTask);
-    setTasks([...project.tasks]);
   };
 
   return (
     <section className="text-left">
       <h2 className="text-2xl font-bold font-stone-700 mb-4">Tasks</h2>
-      <form onSubmit={form.handleSubmit(addTask)}>
+      <form onSubmit={form.handleSubmit(saveTaskForm)}>
         <div className="flex items-center gap-4">
           <input
             type="text"
@@ -52,7 +44,7 @@ export default function ProjectTasks({ project }) {
               <span>{task}</span>
               <button
                 className="text-stone-700 hover:text-red-500"
-                onClick={() => deleteTask(task)}
+                onClick={() => deleteTask(projectName, task)}
               >
                 Clear
               </button>

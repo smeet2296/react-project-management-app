@@ -1,7 +1,12 @@
 import moment from "moment";
 import ProjectTasks from "./ProjectTasks";
+import { useContext } from "react";
+import { ProjectsStore } from "../store/projects-store";
 
-export default function Home({ onAddProject, onDeleteProject, project = {} }) {
+export default function Home({ onAddProject, selectedProject }) {
+  const { deleteProject, projects } = useContext(ProjectsStore);
+  const project =
+    projects.find((project) => project.projectName === selectedProject) || {};
   let view;
 
   const projectView = (
@@ -14,13 +19,13 @@ export default function Home({ onAddProject, onDeleteProject, project = {} }) {
           <button
             type="button"
             className="text-stone-600 hover:text-stone-950"
-            onClick={() => onDeleteProject(project.projectName)}
+            onClick={() => deleteProject(project.projectName)}
           >
             Delete
           </button>
         </div>
         <p className="mb-4 text-left text-stone-400">
-          {moment(project.dueDate).format("DD/MM/YYYY")}
+          {moment(project.dueDate).format("DD-MMM-YYYY")}
         </p>
         <p className="text-left text-stone-600 whitespace-pre-wrap">
           {project.projectDescription}
@@ -50,7 +55,7 @@ export default function Home({ onAddProject, onDeleteProject, project = {} }) {
     </div>
   );
 
-  if (project.projectName != null) {
+  if (selectedProject != null) {
     view = projectView;
   } else {
     view = noProjectView;
